@@ -16,10 +16,17 @@ MYSQL_SSL_CA = os.getenv("MYSQL_SSL_CA")
 MYSQL_SSL_CERT = os.getenv("MYSQL_SSL_CERT")
 MYSQL_SSL_KEY = os.getenv("MYSQL_SSL_KEY")
 
-DATABASE_URL = (
-    f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PWD}"
-    f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
-)
+if MYSQL_HOST and MYSQL_HOST.startswith("/cloudsql/"):
+    DATABASE_URL = (
+        f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PWD}"
+        f"@/{MYSQL_DATABASE}"
+        f"?unix_socket={MYSQL_HOST}"
+    )
+else:
+    DATABASE_URL = (
+        f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PWD}"
+        f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+    )
 
 connect_args = {}
 
