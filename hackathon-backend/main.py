@@ -7,9 +7,12 @@ from database import engine, get_db
 from models import Base, Question, Answer
 from schemas import QuestionCreate, AnswerCreate, SimilarQuestionRequest
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
+
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 
 def tokenize_text(text: str):
