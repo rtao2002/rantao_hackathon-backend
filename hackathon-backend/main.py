@@ -139,3 +139,22 @@ def create_answer(
     db.refresh(new_answer)
 
     return new_answer
+
+@app.get("/questions/{question_id}/answers")
+def get_answers(
+    question_id: int,
+    db: Session = Depends(get_db),
+):
+    question = db.query(Question).filter(Question.id == question_id).first()
+
+    if question is None:
+        return {"error": "Question not found"}
+
+    answers = (
+        db.query(Answer)
+        .filter(Answer.question_id == question_id)
+        .order_by(Answer.created_at.desc())
+        .all()
+    )
+
+    return answers
