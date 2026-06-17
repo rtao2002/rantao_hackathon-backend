@@ -3,11 +3,13 @@ from typing import List
 
 from pydantic import BaseModel
 
+class AIQuestionCheckRequest(BaseModel):
+    title: str
+    body: str
 
 class QuestionCreate(BaseModel):
     title: str
     body: str
-
 
 class AnswerCreate(BaseModel):
     body: str

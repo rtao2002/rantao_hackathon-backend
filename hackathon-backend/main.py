@@ -7,6 +7,10 @@ from database import engine, get_db
 from models import Base, Question, Answer
 from schemas import QuestionCreate, AnswerCreate, SimilarQuestionRequest
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import json
+from openai import OpenAI
+from schemas import AIQuestionCheckRequest
 
 app = FastAPI()
 app.add_middleware(
@@ -19,6 +23,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.on_event("startup")
 def on_startup():
@@ -158,3 +164,53 @@ def get_answers(
     )
 
     return answers
+
+@app.post("/ai/check-question")
+def check_question_with_ai(request: AIQuestionCheckRequest):
+    prompt = f"""
+You are an assistant for a university student Q&A website.
+
+Check the following question before it is posted.
+
+Title:
+{request.title}
+
+Body:
+{request.body}
+
+Evaluate:
+1. Is it appropriate for a student Q&A site?
+2. Is it clear enough?
+3. What category does it belong to?
+4. Is there any concern before posting?
+
+Do not rewrite the user's question.
+
+Return JSON only with this exact structure:
+{{
+  "is_appropriate": true,
+  "appropriateness_reason": "short reason",
+  "is_clear": true,
+  "clarity_reason": "short reason",
+  "category": "class/research/life/admin/career/other",
+  "warning": "short warning if needed, otherwise empty string"
+}}
+"""
+
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=prompt,
+    )
+
+    try:
+        return json.loads(response.output_text)
+    except json.JSONDecodeError:
+        return {
+            "is_appropriate": None,
+            "appropriateness_reason": "AI returned non-JSON output.",
+            "is_clear": None,
+            "clarity_reason": "",
+            "category": "other",
+            "warning": "",
+            "raw_output": response.output_text,
+        }
