@@ -165,6 +165,19 @@ def get_answers(
 
     return answers
 
+@app.get("/questions/search")
+def search_questions(q: str, db: Session = Depends(get_db)):
+    questions = (
+        db.query(Question)
+        .filter(
+            (Question.title.contains(q)) |
+            (Question.body.contains(q))
+        )
+        .order_by(Question.created_at.desc())
+        .all()
+    )
+    return questions
+
 @app.post("/ai/check-question")
 def check_question_with_ai(request: AIQuestionCheckRequest):
     prompt = f"""
