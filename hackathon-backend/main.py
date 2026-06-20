@@ -67,6 +67,7 @@ def create_question(question: QuestionCreate, db: Session = Depends(get_db)):
     new_question = Question(
         title=question.title,
         body=question.body,
+        category=question.category,
     )
 
     db.add(new_question)
@@ -210,7 +211,7 @@ Return JSON only with this exact structure:
   "appropriateness_reason": "short reason",
   "is_clear": true,
   "clarity_reason": "short reason",
-  "category": "class/research/life/admin/career/other",
+  "category": "class",
   "warning": "short warning if needed, otherwise empty string"
 }}
 """
