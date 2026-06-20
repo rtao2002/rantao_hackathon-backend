@@ -10,6 +10,7 @@ class AIQuestionCheckRequest(BaseModel):
 class QuestionCreate(BaseModel):
     title: str
     body: str
+    category: str = "other"
 
 class AnswerCreate(BaseModel):
     body: str
@@ -34,6 +35,7 @@ class QuestionResponse(BaseModel):
     id: int
     title: str
     body: str
+    category: str | None = None
     created_at: datetime
 
     class Config:

@@ -12,6 +12,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     body = Column(Text, nullable=False)
+    category = Column(String(50), default="other")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     answers = relationship(
