@@ -193,7 +193,13 @@ Body:
 Evaluate:
 1. Is it appropriate for a student Q&A site?
 2. Is it clear enough?
-3. What category does it belong to?
+3. Choose exactly one category from the following:
+   - class: classes, lectures, courses, exams, homework, assignments, credits, grading, course registration
+   - research: research, labs, experiments, professors, papers, thesis, graduate research
+   - life: student life, clubs, circles, housing, food, campus life, daily concerns
+   - admin: university procedures, documents, applications, offices, deadlines, certificates
+   - career: jobs, internships, graduate school choices, career paths, future plans
+   - other: only if none of the above clearly applies
 4. Is there any concern before posting?
 
 Do not rewrite the user's question.
