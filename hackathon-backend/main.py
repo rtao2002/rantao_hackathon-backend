@@ -26,11 +26,6 @@ app.add_middleware(
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
-
-
 def tokenize_text(text: str):
     text = text.lower()
     text = re.sub(r"[^a-zA-Z0-9ぁ-んァ-ン一-龥]+", " ", text)
