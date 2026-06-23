@@ -53,7 +53,7 @@ def calculate_similarity(text1: str, text2: str):
 
 @app.get("/")
 def root():
-    return {"message": "Hackathon Q&A backend with Cloud SQL is running"}
+    return {"message": "Hackathon flea market backend with Cloud SQL is running"}
 
 
 @app.get("/questions")
@@ -129,7 +129,7 @@ def get_question(question_id: int, db: Session = Depends(get_db)):
     question = db.query(Question).filter(Question.id == question_id).first()
 
     if question is None:
-        return {"error": "Question not found"}
+        return {"error": "Item not found"}
 
     return {
         "question": question,
@@ -146,7 +146,7 @@ def create_answer(
     question = db.query(Question).filter(Question.id == question_id).first()
 
     if question is None:
-        return {"error": "Question not found"}
+        return {"error": "Item not found"}
 
     new_answer = Answer(
         question_id=question_id,
@@ -167,7 +167,7 @@ def get_answers(
     question = db.query(Question).filter(Question.id == question_id).first()
 
     if question is None:
-        return {"error": "Question not found"}
+        return {"error": "Item not found"}
 
     answers = (
         db.query(Answer)
@@ -181,29 +181,32 @@ def get_answers(
 @app.post("/ai/check-question")
 def check_question_with_ai(request: AIQuestionCheckRequest):
     prompt = f"""
-You are an assistant for a university student Q&A website.
+You are an assistant for a university student flea market website.
 
-Check the following question before it is posted.
+Check the following item listing before it is posted.
 
-Title:
+Item title:
 {request.title}
 
-Body:
+Item description:
 {request.body}
 
 Evaluate:
-1. Is it appropriate for a student Q&A site?
-2. Is it clear enough?
+1. Is it appropriate for a student flea market site?
+   Appropriate examples: textbooks, books, furniture, home appliances, electronics, clothes, daily goods, stationery, event tickets, free giveaway items.
+   Inappropriate examples: illegal items, dangerous items, alcohol, tobacco, drugs, adult content, weapons, personal information, harassment, spam, unrelated questions, or posts that are not item listings.
+2. Is the listing clear enough? It is clearer if it includes price, item condition, and handover location, but do not reject only because one of these is missing.
 3. Choose exactly one category from the following:
-   - class: classes, lectures, courses, exams, homework, assignments, credits, grading, course registration
-   - research: research, labs, experiments, professors, papers, thesis, graduate research
-   - life: student life, clubs, circles, housing, food, campus life, daily concerns
-   - admin: university procedures, documents, applications, offices, deadlines, certificates
-   - career: jobs, internships, graduate school choices, career paths, future plans
+   - textbook: textbooks, books, reference books, printed study materials
+   - furniture: desks, chairs, shelves, beds, storage, home furniture
+   - electronics: appliances, laptops, monitors, cables, chargers, gadgets
+   - clothing: clothes, shoes, bags, accessories
+   - daily: daily goods, kitchen goods, stationery, household items
+   - ticket: event tickets, circle event tickets, campus event tickets
    - other: only if none of the above clearly applies
 4. Is there any concern before posting?
 
-Do not rewrite the user's question.
+Do not rewrite the user's listing.
 
 Return JSON only with this exact structure:
 {{
@@ -211,7 +214,7 @@ Return JSON only with this exact structure:
   "appropriateness_reason": "short reason",
   "is_clear": true,
   "clarity_reason": "short reason",
-  "category": "class",
+  "category": "textbook",
   "warning": "short warning if needed, otherwise empty string"
 }}
 """
